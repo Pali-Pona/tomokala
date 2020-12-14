@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# ijo tawa toki e toki ijo POSIX Shell 
+
+alias nimisin=alias
+
+nimisin 'lon?'=if
+nimisin anu=elif
+nimisin nol=fi
+nimisin seme=case
+nimisin emes=esac # ni li ike :(
+nimisin insa=in
+
+nimisin pana=return
+nimisin moli=exit
+
+_sama () [ "$1" = "$2" ]
+nimisin 'sama?'=_sama
+_awen () { ! (unset "$1" 2>/dev/null); }
+nimisin 'awen?'=_awen
+
+
+nimi () {
+    sama? "$2" li || { ike 'nimi "li" li lon ala'; pana 1; }
+    awen? "$1" && { ike "nimi $1 li awen"; pana 1; }
+    export "$1"="$3"
+}
+
+awen () {
+    sama? "$2" li || { ike 'nimi "li" li lon ala'; pana 1; }
+    awen? "$1" && { ike "nimi $1 li awen"; pana 1; }
+    readonly "$1"="$3"
+}
+
+nimisin toki="printf '%s\n'"
+ike () toki "ike: $*" >&2
+jaki () { toki "jaki: $*" >&2 && moli 1; }
+

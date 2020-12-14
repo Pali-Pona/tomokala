@@ -1,0 +1,8 @@
+# tomokala
+a home for shell
+
+things in this repository:
+- sonaijo: a shell library for writing scripts in Toki Pona.
+- ltm: a 'controller' for mpv, written in Toki Pona.
+
+all scripts require `sonaijo` in `$PATH`.

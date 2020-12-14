@@ -1,0 +1,62 @@
+#!/bin/sh
+
+# lawa tawa Mpv
+
+. sonaijo
+
+tan-pali () {
+    toki ni li ala.
+}
+
+lupa="${MPV_SOCKET:-$HOME/fs/mpv.sock}"
+_tawa () {
+    [ -S "$lupa" ] || jaki "lupa tawa Mpv li lon ala."
+    : | socat - "$lupa" 2>/dev/null || jaki "Mpv li musi ala e $lupa."
+}
+nimisin 'tawa?'=_tawa
+
+pa () {
+    tawa?
+    toki "$*" | socat - "$lupa"
+}
+
+sona () {
+    tawa?
+    s=$(toki '{"command": ["get_property_string", "'"$1"'"]}' | socat - "$lupa")
+    s=${s%\"re*}
+    s=${s##*:}
+    s=${s%,}
+    s=${s%\"}
+    s=${s#\"}
+    # ijo Mpv toki e Json. ni li jaki mute.
+    toki "$s"
+}
+
+musi () {
+    shift 1
+    pgrep mpv >/dev/null || ampv
+    sleep 0.5
+    seme "$1" insa
+        *.mp3|*.mkv|*.m4a|*.mp4) pa loadfile "$(realpath "$1")" append-play ;;
+        *) pa loadlist "$1" ;;
+    esac
+
+}
+
+ampv () {
+    nohup mpv \
+        --input-ipc-server="$lupa" \
+        --idle \
+        --no-audio-display >/dev/null 2>&1 &
+}
+
+seme "$1" insa
+    ante)   pa cycle pause ;;
+    sona)   sona "$2" ;;
+    weka)   pa quit ;;
+    sinpin) pa playlist-next ;;
+    monsi)  pa playlist-prev ;;
+    musi)   musi "$@" ;;
+    pana)   shift 1; pa "$@" ;;
+    *seme|*h|*?|*tan) tan-pali ;;
+esac
